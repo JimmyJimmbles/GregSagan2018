@@ -9,7 +9,7 @@
 
 get_header(); ?>
 
-<div id="primaryTemplate" class="page-template">
+<div id="primaryTemplate" class="page-template search-template">
 	<div class="container">
 		<div class="row">
 			<div class="col-sm-12">

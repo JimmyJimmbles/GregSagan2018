@@ -835,10 +835,16 @@ i.fa.fa-search.s-btn{
 	float: left;
 	margin: 0 1em 0 0;
 }
+.search-template .post-thumbnail{
+	float: unset !important;
+}
 #primaryTemplate .post-thumbnail img{
 	max-width: 100%;
 	height: auto;
 	display: inline-block;
+}
+.search-template .post-thumbnail img{
+	width: 14em;
 }
 #primaryTemplate .page-template__header{
 	margin: 3em 0px;
@@ -896,7 +902,7 @@ i.fa.fa-search.s-btn{
 .item {
   height: 71vh;
   overflow: hidden;
-  background: url(/wp-content/uploads/2018/02/statue-of-liberty.jpg);
+  background: url('/wp-content/uploads/2018/04/statue-of-liberty.jpg');
   background-position: center;
   background-size: cover;
 }
@@ -1337,7 +1343,7 @@ object {
 
 /*About Section*/
 .about-section{
-	background-image: url('/wp-content/uploads/2018/02/constitution.jpg');
+	background-image: url('/wp-content/uploads/2018/04/constitution.jpg');
   background-size: unset;
   background-repeat: no-repeat;
   background-color: #e8e8e8;
@@ -1608,7 +1614,7 @@ a.read:hover{
 }
 /*Home Contact*/
 .home-contact{
-  background-image: url('/wp-content/uploads/2018/03/SaganCampaign-12-Greg-with-group-1-3-1.jpg');
+  background-image: url('/wp-content/uploads/2018/04/SaganCampaign-12-Greg-with-group-1-3-1.jpg');
 	background-size: contain;
 	background-repeat: no-repeat;
 	background-color: #313a4d;

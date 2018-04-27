@@ -8,28 +8,22 @@
  */
 
 ?>
-
-<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-	<header class="entry-header">
-		<?php the_title( sprintf( '<h2 class="entry-title"><a href="%s" rel="bookmark">', esc_url( get_permalink() ) ), '</a></h2>' ); ?>
-
-		<?php if ( 'post' === get_post_type() ) : ?>
-		<div class="entry-meta">
-			<?php
-			greg_sagan_2018_posted_on();
-			greg_sagan_2018_posted_by();
-			?>
-		</div><!-- .entry-meta -->
-		<?php endif; ?>
+<article id="post-<?php the_ID(); ?>" class="search-result">
+	<header class="search-result__header">
+		<?php
+		the_title(
+			sprintf(
+				'<h2 class="search-result__title"><a href="%s" rel="bookmark" class="search-result__link">',
+				esc_url( get_permalink() )
+			), '</a></h2>'
+		);
+		?>
 	</header><!-- .entry-header -->
 
 	<?php greg_sagan_2018_post_thumbnail(); ?>
 
-	<div class="entry-summary">
+	<div class="search-result__summary">
 		<?php the_excerpt(); ?>
 	</div><!-- .entry-summary -->
 
-	<footer class="entry-footer">
-		<?php greg_sagan_2018_entry_footer(); ?>
-	</footer><!-- .entry-footer -->
 </article><!-- #post-<?php the_ID(); ?> -->

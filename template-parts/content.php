@@ -8,52 +8,38 @@
  */
 
 ?>
+<div class="col-sm-12">
+	<button onclick="window.history.back()" type="button" class="btn bt-default back-btn">
+		<i class="fa fa-long-arrow-left" aria-hidden="true"></i>
+		Return
+	</button>
+</div>
+<div class="col-sm-12">
+	<article id="post-<?php the_ID(); ?>" class="single-post-page">
 
-<article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
-	<header class="entry-header">
-		<?php
-		if ( is_singular() ) :
-			the_title( '<h1 class="entry-title">', '</h1>' );
-		else :
-			the_title( '<h2 class="entry-title"><a href="' . esc_url( get_permalink() ) . '" rel="bookmark">', '</a></h2>' );
-		endif;
+		<?php greg_sagan_2018_post_thumbnail(); ?>
 
-		if ( 'post' === get_post_type() ) :
-			?>
-			<div class="entry-meta">
-				<?php
-				greg_sagan_2018_posted_on();
-				greg_sagan_2018_posted_by();
-				?>
-			</div><!-- .entry-meta -->
-		<?php endif; ?>
-	</header><!-- .entry-header -->
-
-	<?php greg_sagan_2018_post_thumbnail(); ?>
-
-	<div class="entry-content">
-		<?php
-		the_content( sprintf(
-			wp_kses(
-				/* translators: %s: Name of current post. Only visible to screen readers */
-				__( 'Continue reading<span class="screen-reader-text"> "%s"</span>', 'greg-sagan-2018' ),
-				array(
-					'span' => array(
-						'class' => array(),
+		<div class="entry-content">
+			<?php
+				the_content( sprintf(
+					wp_kses(
+						/* translators: %s: Name of current post. Only visible to screen readers */
+						__( 'Continue reading<span class="screen-reader-text"> "%s"</span>', 'greg-sagan-2018' ),
+						array(
+							'span' => array(
+								'class' => array(),
+							),
+						)
 					),
-				)
-			),
-			get_the_title()
-		) );
+					get_the_title()
+				) );
 
-		wp_link_pages( array(
-			'before' => '<div class="page-links">' . esc_html__( 'Pages:', 'greg-sagan-2018' ),
-			'after'  => '</div>',
-		) );
-		?>
-	</div><!-- .entry-content -->
+				wp_link_pages( array(
+					'before' => '<div class="page-links">' . esc_html__( 'Pages:', 'greg-sagan-2018' ),
+					'after'  => '</div>',
+				) );
+			?>
+		</div><!-- .entry-content -->
 
-	<footer class="entry-footer">
-		<?php greg_sagan_2018_entry_footer(); ?>
-	</footer><!-- .entry-footer -->
-</article><!-- #post-<?php the_ID(); ?> -->
+	</article><!-- #post-<?php the_ID(); ?> -->
+</div>

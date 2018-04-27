@@ -46,6 +46,9 @@ if ( ! function_exists( 'greg_sagan_2018_setup' ) ) :
 		register_nav_menus( array(
 			'menu-1' => esc_html__( 'Primary', 'greg-sagan-2018' ),
 		) );
+		register_nav_menus( array(
+			'primary' => esc_html__( 'Navigation Menu', 'greg-sagan-2018' ),
+		) );
 
 		/*
 		 * Switch default core markup for search form, comment form, and comments
@@ -91,9 +94,6 @@ add_action( 'after_setup_theme', 'greg_sagan_2018_setup' );
  * @global int $content_width
  */
 function greg_sagan_2018_content_width() {
-	// This variable is intended to be overruled from themes.
-	// Open WPCS issue: {@link https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards/issues/1043}.
-	// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedVariableFound
 	$GLOBALS['content_width'] = apply_filters( 'greg_sagan_2018_content_width', 640 );
 }
 add_action( 'after_setup_theme', 'greg_sagan_2018_content_width', 0 );
@@ -116,15 +116,37 @@ function greg_sagan_2018_widgets_init() {
 }
 add_action( 'widgets_init', 'greg_sagan_2018_widgets_init' );
 
+
+// Register Custom Sidebar
+function footer1() {
+	$args = array (
+		'id' => 'footer1',
+		'name' => 'Footer 1',
+		'description' => 'Custom Sidebar for Website',
+		'before_title' => '<h3 class="footer-title">',
+		'after_title' => '</h3>',
+		'before_widget' => '<aside id="%1$s" class="widget %2$s">',
+		'after_widget' => '</aside>'
+	);
+	register_sidebar ( $args );
+}
+
+add_action ( 'widgets_init', 'footer1' );
+
 /**
  * Enqueue scripts and styles.
  */
 function greg_sagan_2018_scripts() {
+	wp_enqueue_style ( 'bs_style', 'https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css'); // Bootstrap 3.3.7 CSS
+
 	wp_enqueue_style( 'greg-sagan-2018-style', get_stylesheet_uri() );
 
 	wp_enqueue_script( 'greg-sagan-2018-navigation', get_template_directory_uri() . '/js/navigation.js', array(), '20151215', true );
 
 	wp_enqueue_script( 'greg-sagan-2018-skip-link-focus-fix', get_template_directory_uri() . '/js/skip-link-focus-fix.js', array(), '20151215', true );
+
+	wp_enqueue_script('greg-sagan-font-awesome', 'https://use.fontawesome.com/05f2c25adf.js');
+		wp_enqueue_script('greg-sagan-2018-jquery', 'https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js');
 
 	if ( is_singular() && comments_open() && get_option( 'thread_comments' ) ) {
 		wp_enqueue_script( 'comment-reply' );
@@ -152,6 +174,193 @@ require get_template_directory() . '/inc/template-functions.php';
  */
 require get_template_directory() . '/inc/customizer.php';
 
+
+
+/**
+* Registers a new post type
+* @uses $wp_post_types Inserts new post type object into the list
+*
+* @param string  Post type key, must not exceed 20 characters
+* @param array|string  See optional args description above.
+* @return object|WP_Error the registered post type object, or an error object
+*/
+function positions_types() {
+
+    $labels = array(
+        'name'                => __( 'Positions', 'Zonestrap' ),
+        'singular_name'       => __( 'Position', 'Zonestrap' ),
+        'add_new'             => _x( 'Add New Position', 'Zonestrap', 'Zonestrap' ),
+        'add_new_item'        => __( 'Add New Position', 'Zonestrap' ),
+        'edit_item'           => __( 'Edit Position', 'Zonestrap' ),
+        'new_item'            => __( 'New Position', 'Zonestrap' ),
+        'view_item'           => __( 'View Position', 'Zonestrap' ),
+        'search_items'        => __( 'Search Positions', 'Zonestrap' ),
+        'not_found'           => __( 'No Positions found', 'Zonestrap' ),
+        'not_found_in_trash'  => __( 'No Positions found in Trash', 'Zonestrap' ),
+        'parent_item_colon'   => __( 'Parent Position:', 'Zonestrap' ),
+        'menu_name'           => __( 'Positions', 'Zonestrap' ),
+    );
+
+    $args = array(
+        'labels'              => $labels,
+        'hierarchical'        => false,
+        'description'         => 'description',
+        'taxonomies'          => array(),
+        'public'              => true,
+        'show_ui'             => true,
+        'show_in_menu'        => true,
+        'show_in_admin_bar'   => true,
+        'menu_position'       => null,
+        'menu_icon'           => 'dashicons-welcome-write-blog',
+        'show_in_nav_menus'   => true,
+        'publicly_queryable'  => true,
+        'exclude_from_search' => false,
+        'has_archive'         => true,
+        'query_var'           => true,
+        'can_export'          => true,
+        'rewrite'             => true,
+        'capability_type'     => 'post',
+        'supports'            => array(
+            'title', 'editor', 'author', 'thumbnail', 'revisions',
+            )
+    );
+
+    register_post_type( 'positions_types', $args );
+}
+
+add_action( 'init', 'positions_types' );
+
+/* function to restrict categories to the positions posts*/
+add_action('init', 'positions_tax' );
+
+function positions_tax() {
+	register_taxonomy(
+		'positions_types-categories',
+		'positions_types',
+		array(
+			'label'        => __('Postions Categories'),
+			'hierarchical' => true,
+		)
+	);
+}
+
+/**
+* Registers a new post type
+* @uses $wp_post_types Inserts new post type object into the list
+*
+* @param string  Post type key, must not exceed 20 characters
+* @param array|string  See optional args description above.
+* @return object|WP_Error the registered post type object, or an error object
+*/
+function media_posts() {
+
+    $labels = array(
+        'name'                => __( 'Public Media', 'Zonestrap' ),
+        'singular_name'       => __( 'Public Media', 'Zonestrap' ),
+        'add_new'             => _x( 'Add New Public Media Item', 'Zonestrap', 'Zonestrap' ),
+        'add_new_item'        => __( 'Add New Public Media Item', 'Zonestrap' ),
+        'edit_item'           => __( 'Edit Public Media', 'Zonestrap' ),
+        'new_item'            => __( 'New Public Media Item', 'Zonestrap' ),
+        'view_item'           => __( 'View Public Media', 'Zonestrap' ),
+        'search_items'        => __( 'Search Public Media', 'Zonestrap' ),
+        'not_found'           => __( 'No Public Media found', 'Zonestrap' ),
+        'not_found_in_trash'  => __( 'No Public Media found in Trash', 'Zonestrap' ),
+        'parent_item_colon'   => __( 'Parent Public Media:', 'Zonestrap' ),
+        'menu_name'           => __( 'Public Media', 'Zonestrap' ),
+    );
+
+    $args = array(
+        'labels'              => $labels,
+        'hierarchical'        => false,
+        'description'         => 'description',
+        'taxonomies'          => array(),
+        'public'              => true,
+        'show_ui'             => true,
+        'show_in_menu'        => true,
+        'show_in_admin_bar'   => true,
+        'menu_position'       => null,
+        'menu_icon'           => 'dashicons-admin-media',
+        'show_in_nav_menus'   => true,
+        'publicly_queryable'  => true,
+        'exclude_from_search' => false,
+        'has_archive'         => true,
+        'query_var'           => true,
+        'can_export'          => true,
+        'rewrite'             => true,
+        'capability_type'     => 'post',
+        'supports'            => array(
+            'title', 'editor', 'author', 'thumbnail',
+            'revisions', 'page-attributes', 'post-formats'
+            )
+    );
+
+    register_post_type( 'media_posts', $args );
+}
+
+add_action( 'init', 'media_posts' );
+
+/* function to restrict categories to the positions posts*/
+add_action('init', 'media_tax' );
+
+function media_tax() {
+	register_taxonomy(
+		'media_posts-categories',
+		'media_posts',
+		array(
+			'label'        => __('Media Categories'),
+			'hierarchical' => true,
+		)
+	);
+}
+
+function coming_events() {
+
+    $labels = array(
+        'name'                => __( 'Coming Events', 'Zonestrap' ),
+        'singular_name'       => __( 'Coming Event', 'Zonestrap' ),
+        'add_new'             => _x( 'Add New Coming Event', 'Zonestrap', 'Zonestrap' ),
+        'add_new_item'        => __( 'Add New Coming Event', 'Zonestrap' ),
+        'edit_item'           => __( 'Edit Coming Event', 'Zonestrap' ),
+        'new_item'            => __( 'New Coming Event', 'Zonestrap' ),
+        'view_item'           => __( 'View Coming Event', 'Zonestrap' ),
+        'search_items'        => __( 'Search Coming Event', 'Zonestrap' ),
+        'not_found'           => __( 'No Coming Event found', 'Zonestrap' ),
+        'not_found_in_trash'  => __( 'No Coming Event found in Trash', 'Zonestrap' ),
+        'parent_item_colon'   => __( 'Parent Coming Event:', 'Zonestrap' ),
+        'menu_name'           => __( 'Coming Event', 'Zonestrap' ),
+    );
+
+    $args = array(
+        'labels'              => $labels,
+        'hierarchical'        => false,
+        'description'         => 'description',
+        'taxonomies'          => array(),
+        'public'              => true,
+        'show_ui'             => true,
+        'show_in_menu'        => true,
+        'show_in_admin_bar'   => true,
+        'menu_position'       => null,
+        'menu_icon'           => 'dashicons-calendar-alt',
+        'show_in_nav_menus'   => true,
+        'publicly_queryable'  => true,
+        'exclude_from_search' => false,
+        'has_archive'         => true,
+        'query_var'           => true,
+        'can_export'          => true,
+        'rewrite'             => true,
+        'capability_type'     => 'post',
+        'supports'            => array(
+            'title', 'editor', 'author', 'thumbnail',
+			'page-attributes', 'post-formats'
+            )
+    );
+
+    register_post_type( 'coming_events', $args );
+}
+
+add_action( 'init', 'coming_events' );
+
+
 /**
  * Load Jetpack compatibility file.
  */
@@ -159,3 +368,10 @@ if ( defined( 'JETPACK__VERSION' ) ) {
 	require get_template_directory() . '/inc/jetpack.php';
 }
 
+/**
+* Adding class to anchor tags
+**/
+add_filter( 'nav_menu_link_attributes', function($atts) {
+	$atts['class'] = "underline";
+	return $atts;
+}, 100, 1);

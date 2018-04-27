@@ -4,103 +4,106 @@
  * Handles toggling the navigation menu for small screens and enables TAB key
  * navigation support for dropdown menus.
  */
-( function() {
-	var container, button, menu, links, i, len;
+(function() {
+  var container, mainMenu, button, menu, links, i, len;
 
-	container = document.getElementById( 'site-navigation' );
-	if ( ! container ) {
-		return;
-	}
+  container = document.getElementById("site-navigation");
+  if (!container) {
+    return;
+  }
 
-	button = container.getElementsByTagName( 'button' )[0];
-	if ( 'undefined' === typeof button ) {
-		return;
-	}
+  mainMenu = document.getElementById("mainNav");
+  if (!mainMenu) {
+    return;
+  }
 
-	menu = container.getElementsByTagName( 'ul' )[0];
+  button = document.getElementById("button");
+  if ("undefined" === typeof button) {
+    return;
+  }
 
-	// Hide menu toggle button if menu is empty and return early.
-	if ( 'undefined' === typeof menu ) {
-		button.style.display = 'none';
-		return;
-	}
+  menu = container.getElementsByTagName("ul")[0];
 
-	menu.setAttribute( 'aria-expanded', 'false' );
-	if ( -1 === menu.className.indexOf( 'nav-menu' ) ) {
-		menu.className += ' nav-menu';
-	}
+  // Hide menu toggle button if menu is empty and return early.
+  if ("undefined" === typeof menu) {
+    button.style.display = "none";
+    return;
+  }
 
-	button.onclick = function() {
-		if ( -1 !== container.className.indexOf( 'toggled' ) ) {
-			container.className = container.className.replace( ' toggled', '' );
-			button.setAttribute( 'aria-expanded', 'false' );
-			menu.setAttribute( 'aria-expanded', 'false' );
-		} else {
-			container.className += ' toggled';
-			button.setAttribute( 'aria-expanded', 'true' );
-			menu.setAttribute( 'aria-expanded', 'true' );
-		}
-	};
+  menu.setAttribute("aria-expanded", "false");
+  if (-1 === menu.className.indexOf("nav-menu")) {
+    menu.className += " nav-menu";
+  }
 
-	// Get all the link elements within the menu.
-	links    = menu.getElementsByTagName( 'a' );
+  button.onclick = function() {
+    if (-1 !== mainMenu.className.indexOf("toggled")) {
+      mainMenu.className = mainMenu.className.replace(" toggled", "");
+      button.setAttribute("aria-expanded", "false");
+      menu.setAttribute("aria-expanded", "false");
+    } else {
+      mainMenu.className += " toggled";
+      button.setAttribute("aria-expanded", "true");
+      menu.setAttribute("aria-expanded", "true");
+    }
+  };
 
-	// Each time a menu link is focused or blurred, toggle focus.
-	for ( i = 0, len = links.length; i < len; i++ ) {
-		links[i].addEventListener( 'focus', toggleFocus, true );
-		links[i].addEventListener( 'blur', toggleFocus, true );
-	}
+  /**
+   * Toggles `focus` class to allow submenu access on tablets.
+   */
+ var touchStartFn,
+	 i,
+	 parentLink = container.querySelectorAll(
+		 ".menu-item-has-children > a, .page_item_has_children > a"
+	 );
+  function touchStartFn(e) {
 
-	/**
-	 * Sets or removes .focus class on an element.
-	 */
-	function toggleFocus() {
-		var self = this;
+    var menuItem = this.parentNode,
+      i;
 
-		// Move up through the ancestors of the current link until we hit .nav-menu.
-		while ( -1 === self.className.indexOf( 'nav-menu' ) ) {
+    if (!menuItem.classList.contains("focus")) {
+      e.preventDefault();
+      for (i = 0; i < menuItem.parentNode.children.length; ++i) {
+        if (menuItem === menuItem.parentNode.children[i]) {
+          continue;
+        }
+        menuItem.parentNode.children[i].classList.remove("focus");
+      }
+      menuItem.classList.add("focus");
+    } else {
+      menuItem.classList.remove("focus");
+    }
+  }
 
-			// On li elements toggle the class .focus.
-			if ( 'li' === self.tagName.toLowerCase() ) {
-				if ( -1 !== self.className.indexOf( 'focus' ) ) {
-					self.className = self.className.replace( ' focus', '' );
-				} else {
-					self.className += ' focus';
-				}
-			}
+  for (i = 0; i < parentLink.length; ++i) {
+    parentLink[i].addEventListener("click", touchStartFn, false);
+  }
+})();
 
-			self = self.parentElement;
-		}
-	}
+// stickyHead: Make the navigation and header sticky after scrolling past
+function stickyHead() {
+  var headerWrapper, fullNav, navHeight;
 
-	/**
-	 * Toggles `focus` class to allow submenu access on tablets.
-	 */
-	( function( container ) {
-		var touchStartFn, i,
-			parentLink = container.querySelectorAll( '.menu-item-has-children > a, .page_item_has_children > a' );
+  headerWrapper = document.getElementById('header-wrapper');
+  masterHeader = document.getElementById('mastHead');
+  siteNav = document.getElementById('site-navigation');
+  navHeight = headerWrapper.offsetHeight;
 
-		if ( 'ontouchstart' in window ) {
-			touchStartFn = function( e ) {
-				var menuItem = this.parentNode, i;
+  headerWrapper.style.height = navHeight + "px";
 
-				if ( ! menuItem.classList.contains( 'focus' ) ) {
-					e.preventDefault();
-					for ( i = 0; i < menuItem.parentNode.children.length; ++i ) {
-						if ( menuItem === menuItem.parentNode.children[i] ) {
-							continue;
-						}
-						menuItem.parentNode.children[i].classList.remove( 'focus' );
-					}
-					menuItem.classList.add( 'focus' );
-				} else {
-					menuItem.classList.remove( 'focus' );
-				}
-			};
+  if (window.pageYOffset >= navHeight + 50) {
+    siteNav.classList.add("sticky");
+  }
+  else if (window.pageYOffset < navHeight - 50) {
+    siteNav.classList.remove("sticky");
+  }
+}
+$(window).on("scroll", stickyHead);
 
-			for ( i = 0; i < parentLink.length; ++i ) {
-				parentLink[i].addEventListener( 'touchstart', touchStartFn, false );
-			}
-		}
-	}( container ) );
-} )();
+$('.search-wrapper').click(function(event) {
+  var e = window.event;
+  this.classList.add('focused');
+  e.stopPropagation();
+});
+$(document).click(function(event){
+    $(".search-wrapper").removeClass('focused');
+});

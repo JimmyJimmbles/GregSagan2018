@@ -53,7 +53,7 @@ function greg_sagan_2018_infinite_scroll_render() {
 		if ( is_search() ) :
 			get_template_part( 'template-parts/content', 'search' );
 		else :
-			get_template_part( 'template-parts/content', get_post_type() );
+			get_template_part( 'template-parts/content', get_post_format() );
 		endif;
 	}
 }

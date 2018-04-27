@@ -7,31 +7,38 @@
  * @package Greg_Sagan_2018
  */
 
-get_header();
-?>
+get_header(); ?>
+<div id="primaryTemplate" class="page-template">
+	<div class="container">
+		<div class="col-sm-12">
+			<div class="page-template__header">
+				<h1>
+					<?php
+					the_title();
+					?>
+				</h1>
+			</div>
+		</div>
+		<div class="col-md-9">
+			<?php
+			  if ( have_posts() ) : while ( have_posts() ) : the_post();
 
-	<div id="primary" class="content-area">
-		<main id="main" class="site-main">
+				get_template_part( 'template-parts/content', get_post_type() );
 
-		<?php
-		while ( have_posts() ) :
-			the_post();
-
-			get_template_part( 'template-parts/content', get_post_type() );
-
-			the_post_navigation();
-
-			// If comments are open or we have at least one comment, load up the comment template.
-			if ( comments_open() || get_comments_number() ) :
-				comments_template();
-			endif;
-
-		endwhile; // End of the loop.
-		?>
-
-		</main><!-- #main -->
-	</div><!-- #primary -->
+				endwhile;
+				//if there is no post
+				else:
+				?>
+			 <p><?php print("Sorry this page does not exist"); ?></p>
+			 <?php endif; ?>
+		</div>
+		<div class="col-md-3">
+			<div id="sidebar" class="sidebar">
+				<?php get_sidebar(); ?>
+			</div>
+		</div>
+	</div>
+</div><!-- #primary -->
 
 <?php
-get_sidebar();
 get_footer();
